@@ -2,13 +2,8 @@ package main.java.JDcraw;
 
 
 import main.java.general.BasicCrawler;
+import main.java.mongodb.JDInsert;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.OutputStreamWriter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -16,16 +11,28 @@ import java.util.logging.Logger;
  */
 public class PageCrawJob {
     private static Logger logger = Logger.getLogger(PageCrawJob.class.getName());
+    //https://item.jd.com/1016355.html#none
     public static void main(String[] args){
-        List<String> ls = new ArrayList<String>();
-        try {
-            String url = "http://sclub.jd.com/comment/productPageComments.action?productId=1029507&score=0&sortType=3&page=1&pageSize=10";
-            //String filePath = "data/tianmao/nutrilon官方旗舰店-Nutrilon诺优能(牛栏)_荷兰版_4800g_三段";
-            String content = "";
-            content = BasicCrawler.crawlPage(url, "gb2312");
-            System.out.println(content);
-        } catch(Exception e){
-            e.printStackTrace();
+        for (int i = 2818; i < 10000 ; i++){
+            try {
+                String url = "https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv274939&productId=1029507&score=0&sortType=5&page="+i+"&pageSize=10&isShadowSku=0";
+                String content = "";
+                Thread.sleep(2000);
+                System.out.println("crawler--->"+i);
+                content = BasicCrawler.crawlPage(url, "gb2312");
+                int index = content.indexOf("{");
+                int lastIndex = content.lastIndexOf("}");
+                if(index==-1||lastIndex==-1){
+                    Thread.sleep(120000);
+                    System.out.println("ERROR:"+i);
+                    continue;
+                }
+                String newcontent = content.substring(index,lastIndex+1);
+                new JDInsert().InsertNewAppname("JD","Friso_1",newcontent);
+            } catch(Exception e){
+
+                e.printStackTrace();
+            }
         }
     }
 }

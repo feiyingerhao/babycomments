@@ -28,7 +28,7 @@ public class PageParseJob {
             e.printStackTrace();
         }
         if (index==1){
-            JSONObject comments = JSONObject.fromString("{"+content+"}");
+            JSONObject comments = JSONObject.fromObject("{"+content+"}");
             JSONObject rateDetail=(JSONObject)comments.get("rateDetail");
             JSONObject paginator = (JSONObject)rateDetail.get("paginator");
             Integer lastPage = (Integer) paginator.get("lastPage");
