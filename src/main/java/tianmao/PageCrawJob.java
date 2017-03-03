@@ -1,6 +1,11 @@
 package main.java.tianmao;
 
 
+import main.java.general.BasicCrawler;
+import main.java.mongodb.TMInsert;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 /**
@@ -9,32 +14,31 @@ import java.util.logging.Logger;
 public class PageCrawJob {
     private static Logger logger = Logger.getLogger(PageCrawJob.class.getName());
     public static void main(String[] args){
-        try{
-
-            PageParseJob crawler =new PageParseJob();
-            int end=1;
-            String url="https://rate.tmall.com/list_detail_rate.htm?itemId=22843468031&spuId=215701922&sellerId=1115154404&order=3&currentPage=";
-            String filePath="data/tianmao/nutrilon官方旗舰店-Nutrilon诺优能(牛栏)_荷兰版_4800g_三段";
-            for (int i = 1;i<=99;i++){
-                System.out.println(i);
-                Thread.currentThread().sleep(2000);
-                if(i==1){
-                    end=crawler.parse(url+i, filePath,i);
-                    System.out.println("-->"+end);
-                    if(end==-2){
-                        i--;
-                    }
+        List<String> ls = new ArrayList<String>();
+        for (int i = 1;i<=99;i++){
+            try{
+                String url="https://rate.tmall.com/list_detail_rate.htm?itemId=521547074530&spuId=344279177&sellerId=725677994&order=3&currentPage="+i;
+                String content = "";
+                Thread.sleep(2000);
+                System.out.println("crawler--->"+i);
+                content = BasicCrawler.crawlPage(url, "gb2312");
+                String newcontent = content.replaceAll(";","-");
+                int index = newcontent.indexOf("{");
+                if(content.contains("{\"rgv587_flag\":\"sm\"")||index==-1){
+                    Thread.sleep(5000);
+                    System.out.println("ERROR:");
+                    i--;
                 }else{
-                    int tmp=crawler.parse(url+i, filePath,i);
-                    System.out.println("tmp-->"+tmp);
-                    if(tmp!=0){
-                        i--;
-                    }
+                    String json = newcontent.substring(index) ;
+                    System.out.println(json);
+                    new TMInsert().TMInsertNewAppname("TM","Cowala",json);
                 }
-            }
 
-        } catch (Exception e){
-            e.printStackTrace();
+
+            } catch (Exception e){
+                e.printStackTrace();
+            }
         }
+
     }
 }

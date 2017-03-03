@@ -13,7 +13,7 @@ public class PageCrawJob {
     private static Logger logger = Logger.getLogger(PageCrawJob.class.getName());
     //https://item.jd.com/1016355.html#none
     public static void main(String[] args){
-        for (int i = 2818; i < 10000 ; i++){
+        for (int i = 3818; i < 10000 ; i++){
             try {
                 String url = "https://club.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv274939&productId=1029507&score=0&sortType=5&page="+i+"&pageSize=10&isShadowSku=0";
                 String content = "";
